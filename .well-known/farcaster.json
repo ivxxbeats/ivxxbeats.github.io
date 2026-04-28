@@ -1,11 +1,20 @@
-﻿<!DOCTYPE html>
-<html>
-<head>
-    <script>
-        window.location.href = "https://api.farcaster.xyz/miniapps/hosted-manifest/YOUR_HOSTED_MANIFEST_ID";
-    </script>
-</head>
-<body>
-    Redirecting to Farcaster Mini App manifest...
-</body>
-</html>
+{
+  "accountAssociation": {
+    "header": "eyJmaWQiOjE0MzY0LCJ0eXBlIjoiY3VzdG9keSIsImtleSI6IjB4NzcxRTQ1ZTgxQTdEN2I3MjFDNkE4RDBBNWExMDY4ODdjQzNkRmZFMCJ9",
+    "payload": "eyJkb21haW4iOiJkYXJ0bGFicy5tZSJ9",
+    "signature": "Z0vkxAB87kqC+2bZrJto+/M7xAn6uSfUCwr3lLWf3msZuQl6CvKKvclLFzovj1lmakj1fy7p+AhD0CRmEIALCxs="
+  },
+  "miniapp": {
+    "version": "1",
+    "name": "Dart Labs XLGEN Engine",
+    "iconUrl": "https://dartlabs.me/3.png",
+    "homeUrl": "https://dartlabs.me",
+    "imageUrl": "https://dartlabs.me/3.png",
+    "splashImageUrl": "https://dartlabs.me/splash.png",
+    "splashBackgroundColor": "#0d0d12",
+    "subtitle": "Living deterministic generative art",
+    "description": "Dual Layer renderer that renders both static and dynamic rule sets for generative art that becomes live data analysis",
+    "primaryCategory": "art-creativity",
+    "heroImageUrl": "https://dartlabs.me/3.png"
+  }
+}
