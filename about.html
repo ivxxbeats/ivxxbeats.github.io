@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DART GENXL // ENGINE</title>
+    <title>DART GENXL // THE ENGINE</title>
     <style>
         body {
             background: #0a0a0f;
             color: #e8e8f0;
-            font-family: monospace;
+            font-family: 'Inter', monospace;
             padding: 20px;
             line-height: 1.5;
         }
@@ -20,20 +20,26 @@
             color: #aa88ff;
             border-bottom: 1px solid #aa88ff40;
             padding-bottom: 10px;
+            font-size: 28px;
+            font-weight: 500;
         }
         h2 {
-            color: #5a5aff;
-            margin-top: 30px;
+            color: #aa88ff;
+            margin-top: 40px;
+            font-size: 20px;
+            font-weight: 500;
         }
         h3 {
             color: #8888aa;
-            margin-top: 20px;
+            margin-top: 24px;
+            font-size: 16px;
+            font-weight: 500;
         }
         .engine {
             background: #111116;
             border-radius: 16px;
             padding: 20px;
-            margin: 20px 0;
+            margin: 24px 0;
             border-left: 4px solid;
         }
         .canonical { border-left-color: #55eeaa; }
@@ -41,63 +47,74 @@
         .rupture { border-left-color: #ff7755; }
         .badge {
             display: inline-block;
-            padding: 2px 10px;
+            padding: 4px 12px;
             border-radius: 20px;
             font-size: 11px;
-            font-weight: bold;
+            font-weight: 600;
+            letter-spacing: 0.5px;
         }
         .badge.canonical { background: #55eeaa20; color: #55eeaa; }
         .badge.echo { background: #66aaff20; color: #66aaff; }
         .badge.rupture { background: #ff775520; color: #ff7755; }
-        code {
-            background: #1a1a2a;
-            padding: 2px 6px;
-            border-radius: 6px;
-            font-family: monospace;
-            font-size: 11px;
-        }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin: 20px 0;
-        }
-        td, th {
-            padding: 8px;
-            border-bottom: 1px solid #2a2a3a;
-            text-align: left;
-        }
-        .intensity-phase {
+        .phase {
             display: inline-block;
             padding: 4px 12px;
             border-radius: 20px;
             font-size: 11px;
-            font-weight: bold;
+            font-weight: 600;
+            margin-right: 8px;
+            margin-bottom: 8px;
         }
-        .stirring { background: #2a5a5a20; color: #5aaeae; }
-        .awakening { background: #5a5aae20; color: #aeaeee; }
-        .awakened { background: #ae5aae20; color: #eeaaee; }
+        .dormant { background: #2a5a5a20; color: #5aaeae; }
+        .awakened { background: #5a5aae20; color: #aeaeee; }
         .ascended { background: #ae5a2a20; color: #ffaa55; }
+        .trait-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        .trait-table td, .trait-table th {
+            padding: 10px;
+            border-bottom: 1px solid #2a2a3a;
+            text-align: left;
+            font-size: 12px;
+        }
+        .trait-table th {
+            color: #aa88ff;
+            font-weight: 500;
+        }
         button {
             background: #0d0d12;
             color: #e8e8f0;
             border: 1px solid #aa88ff;
-            padding: 8px 16px;
+            padding: 8px 20px;
             border-radius: 40px;
             font-family: monospace;
             cursor: pointer;
-            margin-bottom: 20px;
+            margin-bottom: 30px;
+            font-size: 12px;
         }
         button:hover {
             background: #1a1a24;
         }
         .footer {
-            margin-top: 40px;
+            margin-top: 50px;
             text-align: center;
             color: #666688;
             font-size: 11px;
+            padding: 20px 0;
         }
         a {
             color: #aa88ff;
+            text-decoration: none;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+        hr {
+            border: none;
+            border-top: 1px solid #2a2a3a;
+            margin: 30px 0;
         }
     </style>
 </head>
@@ -105,94 +122,111 @@
     <div class="container">
         <button onclick="window.location.href='index.html'">← BACK TO ENGINE</button>
         
-        <h1>DART GENXL ENGINE</h1>
-        <p>Deterministic generative art. Same token + same transaction hash = same output. Forever. No randomness. No external calls.</p>
-
-        <h2>⚡ INTENSITY: TWO LAYERS</h2>
+        <h1>DART GENXL</h1>
+        <p style="font-size: 14px; color: #8888aa;">Deterministic generative art. Each token is a fixed identity. The viewer adds pressure. The collector owns the source.</p>
         
-        <h3>CANONICAL INTENSITY (deterministic)</h3>
-        <p>Fixed value derived from token seed. Stored on mint. Never changes. Ranges from 0.32 to 0.90. This is what collectors own.</p>
-        <code>canonicalIntensity = 0.32 + seed_RNG() * 0.58</code>
+        <h2>THE TWO LAYERS</h2>
+        <p><strong>Canonical State</strong> — The token you own. Fixed at mint. Never changes.</p>
+        <p><strong>Live Pressure</strong> — The viewer experience. Fetched from Farcaster activity. Moves with the network.</p>
+        <p>Same token. Same owner. Same canonical output. The viewer sees the art breathe. The collector holds the truth.</p>
         
-        <h3>LIVE INTENSITY (pressure)</h3>
-        <p>Fetched every 15 seconds from Farcaster activity. Changes the artwork in real time. Ranges from 0.05 to 0.95. This is what viewers experience.</p>
-        <code>liveIntensity = fetch('intensity.json') → pressure = pow(liveIntensity, 1.2)</code>
+        <h2>CANONICAL INTENSITY</h2>
+        <p>Every token has a native energy level. Dormant. Awakened. Ascended. This is not viewer brightness. This is the token's internal voltage.</p>
         
-        <h2>🔧 HOW PRESSURE AFFECTS ART</h2>
-        <div class="intensity-phase stirring">0-35% STIRRING</div>
-        <p>Subtle motion. Calm breathing. Gentle waves.</p>
+        <div>
+            <span class="phase dormant">DORMANT</span>
+            <span class="phase awakened">AWAKENED</span>
+            <span class="phase ascended">ASCENDED</span>
+        </div>
         
-        <div class="intensity-phase awakening">35-60% AWAKENING</div>
-        <p>Increased contrast. Faster waves. More energy.</p>
+        <p>A Dormant token feels quiet. Low contrast. Calm fields. Stable.</p>
+        <p>An Awakened token presses against itself. Higher energy. Visible pressure. Edge.</p>
+        <p>An Ascended token is born near its maximum. High aggression. Strong color. Permanent transformation.</p>
         
-        <div class="intensity-phase awakened">60-82% AWAKENED</div>
-        <p>Color boost. Stronger distortions. Deformation.</p>
-        
-        <div class="intensity-phase ascended">82-100% ASCENDED</div>
-        <p>Reality shift. Physics break. Maximum chaos.</p>
-
-        <h2>🎭 THREE ENGINES</h2>
+        <h2>THREE ENGINES</h2>
         
         <div class="engine canonical">
             <span class="badge canonical">CANONICAL</span>
-            <p><strong>stable · controlled · alive</strong></p>
-            <p>The pure form. Breathes like a living field. Center holds. Harmonic layering.</p>
-            <p><code>breath = sin(liveTime * 0.8) * 0.05</code><br>
-            <code>harmonic = sin(t * PI * 2 + liveTime) * 0.04</code><br>
-            <code>center = exp(-(rx² + ry²) * 2.0)</code></p>
-            <p><strong>What you feel:</strong> Meditation. Stability. Life.</p>
+            <p><strong>Stable. Controlled. Alive.</strong></p>
+            <p>The pure form. Holds structure under pressure. Breathes like a living field. Center holds. Harmonic. Clean.</p>
+            <p>Feels like meditation. Like watching something alive but still.</p>
         </div>
         
         <div class="engine echo">
             <span class="badge echo">ECHO</span>
-            <p><strong>lagging · echoing · smeared</strong></p>
-            <p>Trails behind itself. Memory drag across frames. Spatial drift.</p>
-            <p><code>trail = t * 0.85 + sin((t + trailShift) * PI * 2) * 0.15</code><br>
-            <code>drift = rx += sin(liveTime * 1.5 + ry * 2) * 0.12 * pressure</code><br>
-            <code>memory = echoMemoryBuffer * memoryBlend * directional</code></p>
-            <p><strong>What you feel:</strong> Reverberation. Lag. Ghosts of past frames.</p>
+            <p><strong>Lagging. Recursive. Smeared.</strong></p>
+            <p>Trails behind itself. Remembers what was. Drifts across frames. Ghosts of previous states.</p>
+            <p>Feels like reverberation. Like watching a signal that already passed.</p>
         </div>
         
         <div class="engine rupture">
             <span class="badge rupture">RUPTURE</span>
-            <p><strong>unstable · fracturing · tearing</strong></p>
-            <p>Snaps at start. Fracture zones. Instability flicker. Tears reality.</p>
-            <p><code>shock = exp(-liveTime * 6) * 0.8</code><br>
-            <code>fractureZone = sin(rx * 3) * cos(ry * 3)</code><br>
-            <code>if (fractureZone > 0.4) t = abs(t - 0.5) * 1.4</code><br>
-            <code>flicker = sin(liveTime * 20 + t * 10) * 0.08</code></p>
-            <p><strong>What you feel:</strong> Breaking. Tearing. Instability.</p>
+            <p><strong>Unstable. Fracturing. Tearing.</strong></p>
+            <p>Breaks continuity. Exposes seams. Shocks at the start. Fracture zones appear. Instability flickers.</p>
+            <p>Feels like breaking. Like pressure finally winning.</p>
         </div>
-
-        <h2>🎨 TRAIT SYSTEM</h2>
-        <table>
-            <tr><th>Trait</th><th>Options</th><th>Effect</th></tr>
-            <tr><td>Rarity</td><td>Common · Uncommon · Rare · Mythic · Grail</td><td>Rarity affects trait weights, Grail gets anomalies</td></tr>
-            <tr><td>Archetype</td><td>Signal · Drift · Rift · Core · Prism · Void</td><td>Base geometry transformation</td></tr>
-            <tr><td>Anchor Form</td><td>Aether · PrismHeart · Faultline · Gate · Nexus · Bloom</td><td>Final output shaping</td></tr>
-            <tr><td>Primary Driver</td><td>Fractal · Pattern · Color · Composition</td><td>Dominant visual logic</td></tr>
-            <tr><td>Spatial Behavior</td><td>Radial · Spiral · FlowField · Kaleido · Vortex · Asymmetrical · Orbit · Tunnel · FaultGrid · MirrorSplit · PressureWell</td><td>Coordinate space transformation</td></tr>
-            <tr><td>Failure Mode</td><td>Recovering · Residual · VoidBloom · Fracture</td><td>Edge case fallback behavior</td></tr>
-            </tr>
-        <p>Each token gets a unique combination. Deterministic from seed. No two tokens are the same.</p>
-
-        <h2>🌀 MICRO EVENTS</h2>
-        <p>8% chance per token. Rare accents that appear in the output.</p>
-        <ul>
-            <li><strong>SignalScar</strong> — high frequency scar across the image</li>
-            <li><strong>PhaseGlitch</strong> — color channel shift</li>
-            <li><strong>MemoryFlicker</strong> — subtle pulsing artifact</li>
-            <li><strong>Crackle</strong> — noise burst lines</li>
+        
+        <h2>WHAT CANONICAL INTENSITY CONTROLS</h2>
+        <p>Canonical intensity is not decoration. It changes how the engine behaves.</p>
+        <ul style="margin-left: 20px; color: #8888aa; line-height: 1.8;">
+            <li>Field strength — how hard the geometry pushes</li>
+            <li>Awakening state — dormant, awakened, or ascended from birth</li>
+            <li>Contrast pressure — dark zones deepen, bright zones sharpen</li>
+            <li>Color charge — restrained palette or volatile saturation</li>
+            <li>Engine expression — how strongly each engine shows itself</li>
+            <li>Failure response — how the system reacts when fields collapse</li>
+            <li>Grail amplification — rare tokens break harder</li>
         </ul>
-
-        <h2>🔗 DETERMINISTIC CHAIN</h2>
-        <code>tokenId + txHash → seed → RNG → traits → geometry → color → output</code>
-        <p>Same inputs. Same output. Forever. Verifiable on-chain.</p>
-
-        <div class="footer">
-            <p>DART GENXL — deterministic generative art on Farcaster</p>
-            <p><a href="https://github.com/ivxxbeats/dartgenxl-miniapp">source</a> · <a href="https://warpcast.com/~/channel/dartgenxl">channel</a></p>
-        </div>
+        
+        <h2>WHAT LIVE PRESSURE DOES</h2>
+        <p>Live intensity is the viewer layer. Fetched every few seconds from Farcaster activity. The artwork moves with the network.</p>
+        <ul style="margin-left: 20px; color: #8888aa; line-height: 1.8;">
+            <li>Aura intensity — glow and presence</li>
+            <li>Motion pressure — faster or slower wave movement</li>
+            <li>Echo trails — stronger or weaker memory drag</li>
+            <li>Rupture seams — fracture lines open or close</li>
+            <li>Viewer glow — responsive light wrap</li>
+            <li>Signature pulse — the engine's signature accelerates</li>
+        </ul>
+        
+        <h2>THE TRAIT STACK</h2>
+        <p>Every token gets a unique trait stack from its seed. Traits are not labels. They change the art.</p>
+        
+        <table class="trait-table">
+            <tr><th>Trait</th><th>Options</th><th>What It Changes</th></tr>
+            <tr><td>Rarity</td><td>Common, Uncommon, Rare, Mythic, Grail</td><td>Trait weights, anomaly strength, event score</td></tr>
+            <tr><td>Archetype</td><td>Signal, Drift, Rift, Core, Prism, Void</td><td>Base geometry transformation</td></tr>
+            <tr><td>Anchor Form</td><td>Aether, PrismHeart, Faultline, Gate, Nexus, Bloom</td><td>Final shaping bias</td></tr>
+            <tr><td>Primary Driver</td><td>Fractal, Pattern, Color, Composition</td><td>Dominant visual logic</td></tr>
+            <tr><td>Engine Type</td><td>Canonical, Echo, Rupture</td><td>Core field law</td></tr>
+            <tr><td>Spatial Behavior</td><td>Radial, Spiral, Kaleido, FlowField, Vortex, Asymmetrical, Orbit, Tunnel, FaultGrid, MirrorSplit, PressureWell</td><td>Coordinate space transformation</td></tr>
+            <tr><td>Failure Mode</td><td>Recovering, Residual, VoidBloom, Fracture</td><td>How the system reacts to field collapse</td></tr>
+            <tr><td>Anomaly</td><td>SpectralSplit, PhaseInversion, GravityWell, EchoLoop, Collapse</td><td>Rare law-breaking behavior</td></tr>
+        </table>
+        
+        <h2>MICRO EVENTS</h2>
+        <p>Eight percent of tokens carry a micro event. A rare deterministic accent. Not viewer randomness. Seeded token behavior.</p>
+        
+        <p><strong>SignalScar</strong> — A sharp interruption across the image. Like a wound.</p>
+        <p><strong>PhaseGlitch</strong> — A shift in color channels. Spectral offset.</p>
+        <p><strong>MemoryFlicker</strong> — A subtle pulse artifact. Echo instability.</p>
+        <p><strong>Crackle</strong> — Short burst lines. Like fracture sparks.</p>
+        
+        <h2>GRAIL TOKENS</h2>
+        <p>Grails are the rarest tokens. One percent. They break rules. Anomalies appear. Canonical intensity amplifies law-breaking behavior. Stronger inversion. Stronger collapse. Stronger rupture logic.</p>
+        <p>Grails do not feel like other tokens. They feel wrong. That is the point.</p>
+        
+        <h2>THE DETERMINISTIC CHAIN</h2>
+        <p>Token ID plus transaction hash produces a seed. The seed produces every trait. Every intensity. Every behavior. The chain is fixed.</p>
+        <p>Same token. Same transaction. Same output. Forever.</p>
+        <p>No randomness after mint. No external calls for the owned artwork. The viewer reacts. The token does not change.</p>
+        
+        <hr />
+        
+        <p style="text-align: center; font-size: 12px; color: #666688;">
+            DART GENXL — deterministic generative art on Farcaster<br>
+            <a href="https://github.com/ivxxbeats/dartgenxl-miniapp">Source</a> · <a href="https://warpcast.com/~/channel/dartgenxl">Channel</a>
+        </p>
     </div>
 </body>
 </html>
