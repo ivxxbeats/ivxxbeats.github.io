@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<body>
+    <canvas id="canvas" width="1200" height="630"></canvas>
+    <script>
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        
+        ctx.fillStyle = '#0d0d12';
+        ctx.fillRect(0, 0, 1200, 630);
+        
+        ctx.fillStyle = '#aa88ff';
+        ctx.font = 'bold 72px Arial';
+        ctx.textAlign = 'center';
+        ctx.fillText('DART GENXL', 600, 300);
+        
+        ctx.fillStyle = '#e8e8f0';
+        ctx.font = '24px Arial';
+        ctx.fillText('Deterministic Generative Art', 600, 400);
+        
+        ctx.fillStyle = '#ffaa55';
+        ctx.font = 'bold 16px Arial';
+        ctx.fillText('⚡ LIVE PRESSURE', 600, 480);
+        
+        const link = document.createElement('a');
+        link.download = 'hero.png';
+        link.href = canvas.toDataURL();
+        link.click();
+    </script>
+</body>
+</html>
