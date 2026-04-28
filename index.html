@@ -7,18 +7,11 @@
     <meta property="of:version" content="vNext" />
     <meta property="of:accepts:xmtp" content="2024-02-01" />
     <meta name="farcaster:miniapp" content="true" />
-    <meta property="fc:frame" content="vNext" />
-    <meta property="fc:frame:image" content="https://ivxxbeats.github.io/dartgenxl-miniapp/og-image.png" />
-    <meta property="fc:frame:button:1" content="OPEN APP" />
-    <meta property="fc:frame:button:1:action" content="link" />
-    <meta property="fc:frame:button:1:target" content="https://ivxxbeats.github.io/dartgenxl-miniapp/?tid={tid}" />
-    <meta property="og:title" content="DART GENXL" />
-    <meta property="og:description" content="Deterministic generative art on Farcaster" />
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { background: #0a0a0f; min-height: 100vh; display: flex; justify-content: center; align-items: center; font-family: monospace; padding: 20px; }
         .container { background: #111116; border-radius: 24px; padding: 20px; max-width: 720px; width: 100%; }
-        canvas { display: block; margin: 0 auto; border-radius: 16px; width: 100%; height: auto; background: #050508; }
+        canvas { display: block; margin: 0 auto; border-radius: 16px; width: 100%; height: auto; background: #050508; cursor: pointer; }
         .info-panel { margin-top: 16px; background: #0d0d12; border-radius: 16px; padding: 14px; }
         .traits-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 8px; }
         .trait-item { font-size: 10px; color: #8888aa; font-family: monospace; }
@@ -30,6 +23,7 @@
         .status { margin-top: 14px; font-size: 9px; color: #666688; text-align: center; }
         .cursor { display: inline-block; width: 6px; height: 10px; background: #aa88ff; animation: blink 1s step-end infinite; margin-left: 4px; border-radius: 1px; }
         @keyframes blink { 0%,100% { opacity: 1; } 50% { opacity: 0; } }
+        .live-badge { position: fixed; bottom: 10px; right: 10px; background: #ffaa5520; color: #ffaa55; padding: 4px 12px; border-radius: 20px; font-size: 9px; font-family: monospace; }
     </style>
 </head>
 <body>
@@ -60,10 +54,33 @@
         </div>
         <div class="status" id="status">DART GENXL READY <span class="cursor"></span></div>
     </div>
-    <script src="https://cdn.jsdelivr.net/npm/@farcaster/miniapp-sdk@latest/dist/sdk.js"></script>
-    <script src="engine.js"></script>
-    <script>
-        (function() {
+    <div class="live-badge">⚡ LIVE PRESSURE</div>
+    
+    <script type="module">
+        import { sdk } from 'https://esm.sh/@farcaster/miniapp-sdk';
+        
+        // Engine will be loaded from global scope
+        // Wait for engine to be available
+        function waitForEngine() {
+            return new Promise((resolve) => {
+                if (typeof DartHLGEN !== 'undefined') {
+                    resolve();
+                    return;
+                }
+                const checkInterval = setInterval(() => {
+                    if (typeof DartHLGEN !== 'undefined') {
+                        clearInterval(checkInterval);
+                        resolve();
+                    }
+                }, 100);
+            });
+        }
+        
+        async function start() {
+            // Wait for engine.js to load
+            await waitForEngine();
+            console.log('Engine loaded');
+            
             const canvas = document.getElementById('artCanvas');
             const tokenInput = document.getElementById('tokenInput');
             const hashInput = document.getElementById('hashInput');
@@ -75,6 +92,8 @@
             const urlParams = new URLSearchParams(window.location.search);
             const tokenIdParam = urlParams.get('tid') || '1';
             tokenInput.value = tokenIdParam;
+            
+            let currentSession = null;
             
             function updateTraitsUI(result) {
                 if (!result || !result.traits) return;
@@ -91,33 +110,43 @@
                 document.getElementById('traitMicro').textContent = t.microEvent || 'None';
                 document.getElementById('traitES').textContent = result.eventScore || '0';
                 const canonicalInt = document.getElementById('traitCanonicalInt');
-                if (canonicalInt) canonicalInt.textContent = result.canonicalIntensity.toFixed(3);
+                if (canonicalInt) canonicalInt.textContent = result.canonicalIntensity ? result.canonicalIntensity.toFixed(3) : '—';
             }
             
-            function renderArtwork() {
+            function startLiveMode() {
                 const tokenId = tokenInput.value.trim() || '1';
                 const txHash = hashInput.value.trim() || '0xminiapp';
-                statusDiv.innerHTML = 'RENDERING...';
+                statusDiv.innerHTML = 'LIVE MODE ACTIVE';
+                
+                if (currentSession) {
+                    currentSession.stop();
+                }
+                
                 try {
-                    if (typeof DartHLGEN === 'undefined') {
-                        statusDiv.innerHTML = 'ERROR: Engine not loaded';
-                        return;
-                    }
-                    const result = DartHLGEN.renderCanonical(tokenId, txHash);
-                    if (!result || !result.pixels) throw new Error('No pixels');
-                    DartHLGEN.drawToCanvas(canvas, result);
-                    updateTraitsUI(result);
-                    statusDiv.innerHTML = 'READY';
-                } catch(e) { 
+                    const session = DartHLGEN.createLiveSession(tokenId, txHash);
+                    currentSession = session;
+                    session.startAnimation(canvas);
+                    
+                    // Update UI with canonical traits
+                    const canonical = session.getCanonical();
+                    updateTraitsUI(canonical);
+                    
+                    statusDiv.innerHTML = 'LIVE — PRESSURE SENSITIVE';
+                } catch(e) {
                     console.error(e);
                     statusDiv.innerHTML = 'ERROR: ' + e.message;
+                    // Fallback to canonical
+                    const result = DartHLGEN.renderCanonical(tokenId, txHash);
+                    DartHLGEN.drawToCanvas(canvas, result);
+                    updateTraitsUI(result);
+                    statusDiv.innerHTML = 'CANONICAL MODE';
                 }
             }
             
             function randomToken() {
                 const randomId = Math.floor(Math.random() * 9999) + 1;
                 tokenInput.value = randomId;
-                renderArtwork();
+                startLiveMode();
                 const url = new URL(window.location);
                 url.searchParams.set('tid', randomId);
                 window.history.pushState({}, '', url);
@@ -127,20 +156,21 @@
                 window.open('about.html', '_blank'); 
             }
             
-            renderBtn.onclick = renderArtwork;
+            renderBtn.onclick = startLiveMode;
             randomBtn.onclick = randomToken;
             aboutBtn.onclick = openAbout;
-            tokenInput.onkeypress = (e) => { if (e.key === 'Enter') renderArtwork(); };
+            tokenInput.onkeypress = (e) => { if (e.key === 'Enter') startLiveMode(); };
             
-            // Call render when page loads
-            window.addEventListener('load', function() {
-                renderArtwork();
-                if (window.sdk && window.sdk.actions) {
-                    window.sdk.actions.ready();
-                    console.log('Mini App ready signal sent');
-                }
-            });
-        })();
+            // Start live mode
+            startLiveMode();
+            
+            // Tell Farcaster the app is ready
+            await sdk.actions.ready();
+            console.log('✅ Mini App ready, splash screen hidden');
+        }
+        
+        start();
     </script>
+    <script src="engine.js"></script>
 </body>
 </html>
