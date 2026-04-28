@@ -2,6 +2,8 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>DART GENXL</title>
     <meta property="of:version" content="vNext" />
     <meta property="of:accepts:xmtp" content="2024-02-01" />
     <meta name="farcaster:miniapp" content="true" />
@@ -12,11 +14,6 @@
     <meta property="fc:frame:button:1:target" content="https://ivxxbeats.github.io/dartgenxl-miniapp/?tid={tid}" />
     <meta property="og:title" content="DART GENXL" />
     <meta property="og:description" content="Deterministic generative art on Farcaster" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>DART GENXL</title>
-    <meta property="of:version" content="vNext" />
-    <meta property="of:accepts:xmtp" content="2024-02-01" />
-    <meta name="farcaster:miniapp" content="true" />
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { background: #0a0a0f; min-height: 100vh; display: flex; justify-content: center; align-items: center; font-family: monospace; padding: 20px; }
@@ -63,60 +60,87 @@
         </div>
         <div class="status" id="status">DART GENXL READY <span class="cursor"></span></div>
     </div>
+    <script src="https://cdn.jsdelivr.net/npm/@farcaster/miniapp-sdk@latest/dist/sdk.js"></script>
     <script src="engine.js"></script>
     <script>
-        const canvas = document.getElementById('artCanvas');
-        const tokenInput = document.getElementById('tokenInput');
-        const hashInput = document.getElementById('hashInput');
-        const renderBtn = document.getElementById('renderBtn');
-        const randomBtn = document.getElementById('randomBtn');
-        const aboutBtn = document.getElementById('aboutBtn');
-        const statusDiv = document.getElementById('status');
-        const urlParams = new URLSearchParams(window.location.search);
-        const tokenIdParam = urlParams.get('tid') || '1';
-        tokenInput.value = tokenIdParam;
-        function updateTraitsUI(result) {
-            if (!result || !result.traits) return;
-            const t = result.traits;
-            document.getElementById('traitEngine').textContent = t.engineType || '?';
-            document.getElementById('traitEngineVar').textContent = t.engineVariant || '?';
-            document.getElementById('traitRarity').textContent = t.rarityClass || '?';
-            document.getElementById('traitArchetype').textContent = t.archetype || '?';
-            document.getElementById('traitAnchor').textContent = t.anchorForm || '?';
-            document.getElementById('traitDriver').textContent = t.primaryDriver || '?';
-            document.getElementById('traitSpatial').textContent = t.spatialBehavior || '?';
-            document.getElementById('traitFailure').textContent = t.failureMode || '?';
-            document.getElementById('traitAnomaly').textContent = t.anomalyClass || 'None';
-            document.getElementById('traitMicro').textContent = t.microEvent || 'None';
-            document.getElementById('traitES').textContent = result.eventScore || '0';
-            document.getElementById('traitCanonicalInt').textContent = result.canonicalIntensity.toFixed(3);
-        }
-        function renderArtwork() {
-            const tokenId = tokenInput.value.trim() || '1';
-            const txHash = hashInput.value.trim() || '0xminiapp';
-            statusDiv.innerHTML = 'RENDERING...';
-            try {
-                const result = DartHLGEN.renderCanonical(tokenId, txHash);
-                DartHLGEN.drawToCanvas(canvas, result);
-                updateTraitsUI(result);
-                statusDiv.innerHTML = 'READY';
-            } catch(e) { statusDiv.innerHTML = 'ERROR'; }
-        }
-        function randomToken() {
-            const randomId = Math.floor(Math.random() * 9999) + 1;
-            tokenInput.value = randomId;
-            renderArtwork();
-            const url = new URL(window.location);
-            url.searchParams.set('tid', randomId);
-            window.history.pushState({}, '', url);
-        }
-        function openAbout() { window.open('about.html', '_blank'); }
-        renderBtn.onclick = renderArtwork;
-        randomBtn.onclick = randomToken;
-        aboutBtn.onclick = openAbout;
-        tokenInput.onkeypress = (e) => { if (e.key === 'Enter') renderArtwork(); };
-        renderArtwork();
+        (function() {
+            const canvas = document.getElementById('artCanvas');
+            const tokenInput = document.getElementById('tokenInput');
+            const hashInput = document.getElementById('hashInput');
+            const renderBtn = document.getElementById('renderBtn');
+            const randomBtn = document.getElementById('randomBtn');
+            const aboutBtn = document.getElementById('aboutBtn');
+            const statusDiv = document.getElementById('status');
+            
+            const urlParams = new URLSearchParams(window.location.search);
+            const tokenIdParam = urlParams.get('tid') || '1';
+            tokenInput.value = tokenIdParam;
+            
+            function updateTraitsUI(result) {
+                if (!result || !result.traits) return;
+                const t = result.traits;
+                document.getElementById('traitEngine').textContent = t.engineType || '?';
+                document.getElementById('traitEngineVar').textContent = t.engineVariant || '?';
+                document.getElementById('traitRarity').textContent = t.rarityClass || '?';
+                document.getElementById('traitArchetype').textContent = t.archetype || '?';
+                document.getElementById('traitAnchor').textContent = t.anchorForm || '?';
+                document.getElementById('traitDriver').textContent = t.primaryDriver || '?';
+                document.getElementById('traitSpatial').textContent = t.spatialBehavior || '?';
+                document.getElementById('traitFailure').textContent = t.failureMode || '?';
+                document.getElementById('traitAnomaly').textContent = t.anomalyClass || 'None';
+                document.getElementById('traitMicro').textContent = t.microEvent || 'None';
+                document.getElementById('traitES').textContent = result.eventScore || '0';
+                const canonicalInt = document.getElementById('traitCanonicalInt');
+                if (canonicalInt) canonicalInt.textContent = result.canonicalIntensity.toFixed(3);
+            }
+            
+            function renderArtwork() {
+                const tokenId = tokenInput.value.trim() || '1';
+                const txHash = hashInput.value.trim() || '0xminiapp';
+                statusDiv.innerHTML = 'RENDERING...';
+                try {
+                    if (typeof DartHLGEN === 'undefined') {
+                        statusDiv.innerHTML = 'ERROR: Engine not loaded';
+                        return;
+                    }
+                    const result = DartHLGEN.renderCanonical(tokenId, txHash);
+                    if (!result || !result.pixels) throw new Error('No pixels');
+                    DartHLGEN.drawToCanvas(canvas, result);
+                    updateTraitsUI(result);
+                    statusDiv.innerHTML = 'READY';
+                } catch(e) { 
+                    console.error(e);
+                    statusDiv.innerHTML = 'ERROR: ' + e.message;
+                }
+            }
+            
+            function randomToken() {
+                const randomId = Math.floor(Math.random() * 9999) + 1;
+                tokenInput.value = randomId;
+                renderArtwork();
+                const url = new URL(window.location);
+                url.searchParams.set('tid', randomId);
+                window.history.pushState({}, '', url);
+            }
+            
+            function openAbout() { 
+                window.open('about.html', '_blank'); 
+            }
+            
+            renderBtn.onclick = renderArtwork;
+            randomBtn.onclick = randomToken;
+            aboutBtn.onclick = openAbout;
+            tokenInput.onkeypress = (e) => { if (e.key === 'Enter') renderArtwork(); };
+            
+            // Call render when page loads
+            window.addEventListener('load', function() {
+                renderArtwork();
+                if (window.sdk && window.sdk.actions) {
+                    window.sdk.actions.ready();
+                    console.log('Mini App ready signal sent');
+                }
+            });
+        })();
     </script>
 </body>
 </html>
-
