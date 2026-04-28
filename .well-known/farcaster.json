@@ -1,0 +1,16 @@
+﻿{
+  "accountAssociation": {
+    "header": "eyJmaWQiOjQyMjYzLCJ0eXBlIjoiY3VzdG9keSIsImtleSI6IjB4RDhBQzNlMDI3NGI4ZkU3QjU5QzI5NzUxNTQ0RTU3NzkxN2I5YkRFIn0",
+    "payload": "eyJkb21haW4iOiJpdnh4YmVhdHMuZ2l0aHViLmlvL2RhcnRnZW54bC1taW5pYXBwIn0",
+    "signature": "0x000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
+  },
+  "miniapp": {
+    "version": "1",
+    "name": "Dart GenXL",
+    "iconUrl": "https://ivxxbeats.github.io/dartgenxl-miniapp/hero.png",
+    "homeUrl": "https://ivxxbeats.github.io/dartgenxl-miniapp/",
+    "description": "Deterministic generative art on Farcaster",
+    "splashImageUrl": "https://ivxxbeats.github.io/dartgenxl-miniapp/splash.png",
+    "splashBackgroundColor": "#0d0d12"
+  }
+}
