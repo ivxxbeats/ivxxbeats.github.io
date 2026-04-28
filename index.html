@@ -1,26 +1,42 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    
-    ">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>DART GENXL</title>
+
+    <!-- Farcaster Mini App Embed Meta Tags -->
+    <meta property="fc:frame" content="vNext" />
+    <meta property="fc:frame:image" content="https://dartlabs.me/3.png" />
+    <meta property="fc:frame:button:1" content="OPEN MINI APP" />
+    <meta property="fc:frame:button:1:action" content="launch_frame" />
+    <meta property="fc:frame:button:1:target" content="https://dartlabs.me/?tid={tid}" />
+
+    <!-- Open Graph for social preview -->
+    <meta property="og:title" content="Dart Labs XLGEN" />
+    <meta property="og:description" content="Living deterministic generative art" />
+    <meta property="og:image" content="https://dartlabs.me/3.png" />
+
+    <!-- Your existing Farcaster Mini App meta tags -->
     <meta property="of:version" content="vNext" />
     <meta property="of:accepts:xmtp" content="2024-02-01" />
     <meta name="farcaster:miniapp" content="true" />
+
+    <!-- Content Security Policy -->
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self' https: data: 'unsafe-eval' 'unsafe-inline'; script-src 'self' https: 'unsafe-eval' 'unsafe-inline'; connect-src 'self' https: https://ph.neynar.com; style-src 'self' https: 'unsafe-inline';">
+
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { background: #0a0a0f; min-height: 100vh; display: flex; justify-content: center; align-items: center; font-family: monospace; padding: 20px; }
         .container { background: #111116; border-radius: 24px; padding: 20px; max-width: 720px; width: 100%; }
         canvas { display: block; margin: 0 auto; border-radius: 16px; width: 100%; height: auto; background: #050508; cursor: pointer; }
-        
+
         /* Live intensity bar */
         .intensity-bar-container { margin-top: 16px; background: #1a1a22; border-radius: 20px; height: 6px; width: 100%; overflow: hidden; }
         .intensity-bar-fill { background: linear-gradient(90deg, #5a5aff, #aa88ff); width: 0%; height: 100%; transition: width 0.1s ease; border-radius: 20px; }
         .intensity-label { display: flex; justify-content: space-between; margin-bottom: 6px; font-size: 9px; color: #8888aa; }
         .intensity-value { color: #aa88ff; font-weight: bold; }
-        
+
         .info-panel { margin-top: 16px; background: #0d0d12; border-radius: 16px; padding: 14px; }
         .traits-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 8px; }
         .trait-item { font-size: 10px; color: #8888aa; font-family: monospace; }
@@ -38,7 +54,7 @@
 <body>
     <div class="container">
         <canvas id="artCanvas" width="640" height="640"></canvas>
-        
+
         <!-- Live Intensity Bar -->
         <div class="intensity-bar-container">
             <div class="intensity-label">
@@ -47,7 +63,7 @@
             </div>
             <div class="intensity-bar-fill" id="intensityBar"></div>
         </div>
-        
+
         <div class="info-panel">
             <div class="traits-grid" id="traitsGrid">
                 <div class="trait-item"><span>ENGINE:</span> <span id="traitEngine">—</span></div>
@@ -74,10 +90,10 @@
         <div class="status" id="status">DART GENXL READY <span class="cursor"></span></div>
     </div>
     <div class="live-badge">⚡ PRESSURE SENSITIVE</div>
-    
+
     <script type="module">
         import { sdk } from 'https://esm.sh/@farcaster/miniapp-sdk';
-        
+
         function waitForEngine() {
             return new Promise((resolve) => {
                 if (typeof DartHLGEN !== 'undefined') {
@@ -92,11 +108,11 @@
                 }, 100);
             });
         }
-        
+
         async function start() {
             await waitForEngine();
             console.log('Engine loaded');
-            
+
             const canvas = document.getElementById('artCanvas');
             const tokenInput = document.getElementById('tokenInput');
             const hashInput = document.getElementById('hashInput');
@@ -106,20 +122,20 @@
             const statusDiv = document.getElementById('status');
             const intensityBar = document.getElementById('intensityBar');
             const intensityPercent = document.getElementById('intensityPercent');
-            
+
             const urlParams = new URLSearchParams(window.location.search);
             const tokenIdParam = urlParams.get('tid') || '1';
             tokenInput.value = tokenIdParam;
-            
+
             let currentSession = null;
             let updateInterval = null;
-            
+
             function updateIntensityUI(intensity) {
                 const percent = Math.floor(intensity * 100);
                 intensityBar.style.width = `${percent}%`;
                 intensityPercent.textContent = `${percent}%`;
             }
-            
+
             function updateTraitsUI(result) {
                 if (!result || !result.traits) return;
                 const t = result.traits;
@@ -137,31 +153,30 @@
                 const canonicalInt = document.getElementById('traitCanonicalInt');
                 if (canonicalInt) canonicalInt.textContent = result.canonicalIntensity ? result.canonicalIntensity.toFixed(3) : '—';
             }
-            
+
             function startLiveMode() {
                 const tokenId = tokenInput.value.trim() || '1';
                 const txHash = hashInput.value.trim() || '0xminiapp';
                 statusDiv.innerHTML = 'LIVE MODE ACTIVE';
-                
+
                 if (updateInterval) clearInterval(updateInterval);
                 if (currentSession) currentSession.stop();
-                
+
                 try {
                     const session = DartHLGEN.createLiveSession(tokenId, txHash);
                     currentSession = session;
                     session.startAnimation(canvas);
-                    
+
                     const canonical = session.getCanonical();
                     updateTraitsUI(canonical);
-                    
-                    // Update intensity bar periodically
+
                     updateInterval = setInterval(() => {
                         if (currentSession && currentSession.getDisplayIntensity) {
                             const intensity = currentSession.getDisplayIntensity();
                             updateIntensityUI(intensity);
                         }
                     }, 50);
-                    
+
                     statusDiv.innerHTML = 'LIVE — PRESSURE SENSITIVE';
                 } catch(e) {
                     console.error(e);
@@ -173,7 +188,7 @@
                     statusDiv.innerHTML = 'CANONICAL MODE';
                 }
             }
-            
+
             function randomToken() {
                 const randomId = Math.floor(Math.random() * 9999) + 1;
                 tokenInput.value = randomId;
@@ -182,25 +197,23 @@
                 url.searchParams.set('tid', randomId);
                 window.history.pushState({}, '', url);
             }
-            
+
             function openAbout() {
                 window.location.href = 'about.html';
             }
-            
+
             renderBtn.onclick = startLiveMode;
             randomBtn.onclick = randomToken;
             aboutBtn.onclick = openAbout;
             tokenInput.onkeypress = (e) => { if (e.key === 'Enter') startLiveMode(); };
-            
+
             startLiveMode();
             await sdk.actions.ready();
-            console.log('✅ Mini App ready');
+            console.log('Mini App ready signal sent');
         }
-        
+
         start();
     </script>
     <script src="engine.js"></script>
 </body>
 </html>
-
-
