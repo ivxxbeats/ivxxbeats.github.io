@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+ï»¿<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -12,6 +12,13 @@
         body { background: #0a0a0f; min-height: 100vh; display: flex; justify-content: center; align-items: center; font-family: monospace; padding: 20px; }
         .container { background: #111116; border-radius: 24px; padding: 20px; max-width: 720px; width: 100%; }
         canvas { display: block; margin: 0 auto; border-radius: 16px; width: 100%; height: auto; background: #050508; cursor: pointer; }
+        
+        /* Live intensity bar */
+        .intensity-bar-container { margin-top: 16px; background: #1a1a22; border-radius: 20px; height: 6px; width: 100%; overflow: hidden; }
+        .intensity-bar-fill { background: linear-gradient(90deg, #5a5aff, #aa88ff); width: 0%; height: 100%; transition: width 0.1s ease; border-radius: 20px; }
+        .intensity-label { display: flex; justify-content: space-between; margin-bottom: 6px; font-size: 9px; color: #8888aa; }
+        .intensity-value { color: #aa88ff; font-weight: bold; }
+        
         .info-panel { margin-top: 16px; background: #0d0d12; border-radius: 16px; padding: 14px; }
         .traits-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 8px; }
         .trait-item { font-size: 10px; color: #8888aa; font-family: monospace; }
@@ -29,20 +36,30 @@
 <body>
     <div class="container">
         <canvas id="artCanvas" width="640" height="640"></canvas>
+        
+        <!-- Live Intensity Bar -->
+        <div class="intensity-bar-container">
+            <div class="intensity-label">
+                <span>LIVE INTENSITY</span>
+                <span class="intensity-value" id="intensityPercent">0%</span>
+            </div>
+            <div class="intensity-bar-fill" id="intensityBar"></div>
+        </div>
+        
         <div class="info-panel">
             <div class="traits-grid" id="traitsGrid">
-                <div class="trait-item"><span>ENGINE:</span> <span id="traitEngine">—</span></div>
-                <div class="trait-item"><span>VARIANT:</span> <span id="traitEngineVar">—</span></div>
-                <div class="trait-item"><span>RARITY:</span> <span id="traitRarity">—</span></div>
-                <div class="trait-item"><span>ARCHETYPE:</span> <span id="traitArchetype">—</span></div>
-                <div class="trait-item"><span>ANCHOR:</span> <span id="traitAnchor">—</span></div>
-                <div class="trait-item"><span>DRIVER:</span> <span id="traitDriver">—</span></div>
-                <div class="trait-item"><span>SPATIAL:</span> <span id="traitSpatial">—</span></div>
-                <div class="trait-item"><span>FAILURE:</span> <span id="traitFailure">—</span></div>
-                <div class="trait-item"><span>ANOMALY:</span> <span id="traitAnomaly">—</span></div>
-                <div class="trait-item"><span>MICRO:</span> <span id="traitMicro">—</span></div>
-                <div class="trait-item"><span>EVENT SCORE:</span> <span id="traitES">—</span></div>
-                <div class="trait-item"><span>CANONICAL INT:</span> <span id="traitCanonicalInt">—</span></div>
+                <div class="trait-item"><span>ENGINE:</span> <span id="traitEngine">â€”</span></div>
+                <div class="trait-item"><span>VARIANT:</span> <span id="traitEngineVar">â€”</span></div>
+                <div class="trait-item"><span>RARITY:</span> <span id="traitRarity">â€”</span></div>
+                <div class="trait-item"><span>ARCHETYPE:</span> <span id="traitArchetype">â€”</span></div>
+                <div class="trait-item"><span>ANCHOR:</span> <span id="traitAnchor">â€”</span></div>
+                <div class="trait-item"><span>DRIVER:</span> <span id="traitDriver">â€”</span></div>
+                <div class="trait-item"><span>SPATIAL:</span> <span id="traitSpatial">â€”</span></div>
+                <div class="trait-item"><span>FAILURE:</span> <span id="traitFailure">â€”</span></div>
+                <div class="trait-item"><span>ANOMALY:</span> <span id="traitAnomaly">â€”</span></div>
+                <div class="trait-item"><span>MICRO:</span> <span id="traitMicro">â€”</span></div>
+                <div class="trait-item"><span>EVENT SCORE:</span> <span id="traitES">â€”</span></div>
+                <div class="trait-item"><span>CANONICAL INT:</span> <span id="traitCanonicalInt">â€”</span></div>
             </div>
         </div>
         <div class="controls">
@@ -54,13 +71,11 @@
         </div>
         <div class="status" id="status">DART GENXL READY <span class="cursor"></span></div>
     </div>
-    <div class="live-badge">? LIVE PRESSURE</div>
+    <div class="live-badge">âš¡ PRESSURE SENSITIVE</div>
     
     <script type="module">
         import { sdk } from 'https://esm.sh/@farcaster/miniapp-sdk';
         
-        // Engine will be loaded from global scope
-        // Wait for engine to be available
         function waitForEngine() {
             return new Promise((resolve) => {
                 if (typeof DartHLGEN !== 'undefined') {
@@ -77,7 +92,6 @@
         }
         
         async function start() {
-            // Wait for engine.js to load
             await waitForEngine();
             console.log('Engine loaded');
             
@@ -88,12 +102,21 @@
             const randomBtn = document.getElementById('randomBtn');
             const aboutBtn = document.getElementById('aboutBtn');
             const statusDiv = document.getElementById('status');
+            const intensityBar = document.getElementById('intensityBar');
+            const intensityPercent = document.getElementById('intensityPercent');
             
             const urlParams = new URLSearchParams(window.location.search);
             const tokenIdParam = urlParams.get('tid') || '1';
             tokenInput.value = tokenIdParam;
             
             let currentSession = null;
+            let updateInterval = null;
+            
+            function updateIntensityUI(intensity) {
+                const percent = Math.floor(intensity * 100);
+                intensityBar.style.width = `${percent}%`;
+                intensityPercent.textContent = `${percent}%`;
+            }
             
             function updateTraitsUI(result) {
                 if (!result || !result.traits) return;
@@ -110,7 +133,7 @@
                 document.getElementById('traitMicro').textContent = t.microEvent || 'None';
                 document.getElementById('traitES').textContent = result.eventScore || '0';
                 const canonicalInt = document.getElementById('traitCanonicalInt');
-                if (canonicalInt) canonicalInt.textContent = result.canonicalIntensity ? result.canonicalIntensity.toFixed(3) : '—';
+                if (canonicalInt) canonicalInt.textContent = result.canonicalIntensity ? result.canonicalIntensity.toFixed(3) : 'â€”';
             }
             
             function startLiveMode() {
@@ -118,27 +141,33 @@
                 const txHash = hashInput.value.trim() || '0xminiapp';
                 statusDiv.innerHTML = 'LIVE MODE ACTIVE';
                 
-                if (currentSession) {
-                    currentSession.stop();
-                }
+                if (updateInterval) clearInterval(updateInterval);
+                if (currentSession) currentSession.stop();
                 
                 try {
                     const session = DartHLGEN.createLiveSession(tokenId, txHash);
                     currentSession = session;
                     session.startAnimation(canvas);
                     
-                    // Update UI with canonical traits
                     const canonical = session.getCanonical();
                     updateTraitsUI(canonical);
                     
-                    statusDiv.innerHTML = 'LIVE — PRESSURE SENSITIVE';
+                    // Update intensity bar periodically
+                    updateInterval = setInterval(() => {
+                        if (currentSession && currentSession.getDisplayIntensity) {
+                            const intensity = currentSession.getDisplayIntensity();
+                            updateIntensityUI(intensity);
+                        }
+                    }, 50);
+                    
+                    statusDiv.innerHTML = 'LIVE â€” PRESSURE SENSITIVE';
                 } catch(e) {
                     console.error(e);
                     statusDiv.innerHTML = 'ERROR: ' + e.message;
-                    // Fallback to canonical
                     const result = DartHLGEN.renderCanonical(tokenId, txHash);
                     DartHLGEN.drawToCanvas(canvas, result);
                     updateTraitsUI(result);
+                    updateIntensityUI(result.canonicalIntensity);
                     statusDiv.innerHTML = 'CANONICAL MODE';
                 }
             }
@@ -152,8 +181,8 @@
                 window.history.pushState({}, '', url);
             }
             
-            function openAbout() { 
-                window.location.href = 'about.html'; 
+            function openAbout() {
+                window.location.href = 'about.html';
             }
             
             renderBtn.onclick = startLiveMode;
@@ -161,12 +190,9 @@
             aboutBtn.onclick = openAbout;
             tokenInput.onkeypress = (e) => { if (e.key === 'Enter') startLiveMode(); };
             
-            // Start live mode
             startLiveMode();
-            
-            // Tell Farcaster the app is ready
             await sdk.actions.ready();
-            console.log('? Mini App ready, splash screen hidden');
+            console.log('âœ… Mini App ready');
         }
         
         start();
