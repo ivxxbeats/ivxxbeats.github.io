@@ -1,20 +1,16 @@
 {
   "accountAssociation": {
-    "header": "eyJmaWQiOjE0MzY0LCJ0eXBlIjoiY3VzdG9keSIsImtleSI6IjB4NzcxRTQ1ZTgxQTdEN2I3MjFDNkE4RDBBNWExMDY4ODdjQzNkRmZFMCJ9",
+    "header": "eyJmaWQiOjQyMjYzLCJ0eXBlIjoiY3VzdG9keSIsImtleSI6IjB4RDhBQzNlMDI3NGI4ZkU3QjU5QzI5NzUxNTQ0RTU3NzkxN2I5YkRFIn0",
     "payload": "eyJkb21haW4iOiJkYXJ0bGFicy5tZSJ9",
-    "signature": "Z0vkxAB87kqC+2bZrJto+/M7xAn6uSfUCwr3lLWf3msZuQl6CvKKvclLFzovj1lmakj1fy7p+AhD0CRmEIALCxs="
+    "signature": "0x000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
   },
   "miniapp": {
     "version": "1",
-    "name": "Dart Labs XLGEN Engine",
+    "name": "Dart GenXL",
     "iconUrl": "https://dartlabs.me/3.png",
-    "homeUrl": "https://dartlabs.me",
-    "imageUrl": "https://dartlabs.me/3.png",
+    "homeUrl": "https://dartlabs.me/?tid={tid}",
+    "description": "Deterministic generative art on Farcaster",
     "splashImageUrl": "https://dartlabs.me/splash.png",
-    "splashBackgroundColor": "#0d0d12",
-    "subtitle": "Living deterministic generative art",
-    "description": "Dual Layer renderer that renders both static and dynamic rule sets for generative art that becomes live data analysis",
-    "primaryCategory": "art-creativity",
-    "heroImageUrl": "https://dartlabs.me/3.png"
+    "splashBackgroundColor": "#0d0d12"
   }
 }
