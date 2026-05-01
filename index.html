@@ -5,24 +5,21 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>DART GENXL</title>
 
-    <!-- Farcaster Mini App Embed Meta Tags -->
+    <!-- Farcaster Mini App Meta Tags -->
     <meta property="fc:frame" content="vNext" />
     <meta property="fc:frame:image" content="https://dartlabs.me/3.png" />
     <meta property="fc:frame:button:1" content="OPEN MINI APP" />
     <meta property="fc:frame:button:1:action" content="launch_frame" />
-    <meta property="fc:frame:button:1:target" content="https://dartlabs.me/?tid={tid}" />
+    <meta property="fc:frame:button:1:target" content="https://ivxxbeats.github.io/?tid={tid}" />
 
-    <!-- Open Graph for social preview -->
-    <meta property="og:title" content="Dart Labs XLGEN" />
-    <meta property="og:description" content="Living deterministic generative art" />
+    <meta property="og:title" content="Dart GenXL" />
+    <meta property="og:description" content="Deterministic generative art on Farcaster" />
     <meta property="og:image" content="https://dartlabs.me/3.png" />
 
-    <!-- Your existing Farcaster Mini App meta tags -->
     <meta property="of:version" content="vNext" />
     <meta property="of:accepts:xmtp" content="2024-02-01" />
     <meta name="farcaster:miniapp" content="true" />
 
-    <!-- Content Security Policy -->
     <meta http-equiv="Content-Security-Policy" content="default-src 'self' https: data: 'unsafe-eval' 'unsafe-inline'; script-src 'self' https: 'unsafe-eval' 'unsafe-inline'; connect-src 'self' https: https://ph.neynar.com; style-src 'self' https: 'unsafe-inline';">
 
     <style>
@@ -31,7 +28,6 @@
         .container { background: #111116; border-radius: 24px; padding: 20px; max-width: 720px; width: 100%; }
         canvas { display: block; margin: 0 auto; border-radius: 16px; width: 100%; height: auto; background: #050508; cursor: pointer; }
 
-        /* Live intensity bar */
         .intensity-bar-container { margin-top: 16px; background: #1a1a22; border-radius: 20px; height: 6px; width: 100%; overflow: hidden; }
         .intensity-bar-fill { background: linear-gradient(90deg, #5a5aff, #aa88ff); width: 0%; height: 100%; transition: width 0.1s ease; border-radius: 20px; }
         .intensity-label { display: flex; justify-content: space-between; margin-bottom: 6px; font-size: 9px; color: #8888aa; }
@@ -45,6 +41,8 @@
         .controls { margin-top: 16px; display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
         input, button { background: #0d0d12; color: #e8e8f0; border: 1px solid rgba(255,255,255,0.1); padding: 8px 14px; border-radius: 40px; font-family: monospace; cursor: pointer; }
         button:hover { background: #1a1a24; border-color: #aa88ff; }
+        .mint-btn { background: #aa88ff; color: #0d0d12; border: none; font-weight: bold; }
+        .mint-btn:hover { background: #8855ff; }
         .status { margin-top: 14px; font-size: 9px; color: #666688; text-align: center; }
         .cursor { display: inline-block; width: 6px; height: 10px; background: #aa88ff; animation: blink 1s step-end infinite; margin-left: 4px; border-radius: 1px; }
         @keyframes blink { 0%,100% { opacity: 1; } 50% { opacity: 0; } }
@@ -55,7 +53,6 @@
     <div class="container">
         <canvas id="artCanvas" width="640" height="640"></canvas>
 
-        <!-- Live Intensity Bar -->
         <div class="intensity-bar-container">
             <div class="intensity-label">
                 <span>LIVE INTENSITY</span>
@@ -86,6 +83,7 @@
             <button id="renderBtn">RENDER</button>
             <button id="randomBtn">RANDOM</button>
             <button id="aboutBtn">ABOUT</button>
+            <button id="mintBtn" class="mint-btn">✨ MINT</button>
         </div>
         <div class="status" id="status">DART GENXL READY <span class="cursor"></span></div>
     </div>
@@ -119,6 +117,7 @@
             const renderBtn = document.getElementById('renderBtn');
             const randomBtn = document.getElementById('randomBtn');
             const aboutBtn = document.getElementById('aboutBtn');
+            const mintBtn = document.getElementById('mintBtn');
             const statusDiv = document.getElementById('status');
             const intensityBar = document.getElementById('intensityBar');
             const intensityPercent = document.getElementById('intensityPercent');
@@ -202,9 +201,15 @@
                 window.location.href = 'about.html';
             }
 
+            function openMint() {
+                const tokenId = tokenInput.value.trim() || '1';
+                window.open(`https://dartlabs.me/mint.html?tid=${tokenId}`, '_blank');
+            }
+
             renderBtn.onclick = startLiveMode;
             randomBtn.onclick = randomToken;
             aboutBtn.onclick = openAbout;
+            mintBtn.onclick = openMint;
             tokenInput.onkeypress = (e) => { if (e.key === 'Enter') startLiveMode(); };
 
             startLiveMode();
